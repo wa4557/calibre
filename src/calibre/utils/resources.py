@@ -94,12 +94,6 @@ def get_image_path(path, data=False, allow_user_override=True, use_system_icons=
     if not path:
         return get_path('images', allow_user_override=allow_user_override)
     return get_path('images/'+path, data=data, allow_user_override=allow_user_override)
-     
-     
-def get_image_path(path, data=False, allow_user_override=True):
-    if not path:
-        return get_path('images', allow_user_override=allow_user_override)
-    return get_path('images/'+path, data=data, allow_user_override=allow_user_override)
 
 def js_name_to_path(name, ext='.coffee'):
     path = (u'/'.join(name.split('.'))) + ext
