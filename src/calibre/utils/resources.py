@@ -10,6 +10,8 @@ __docformat__ = 'restructuredtext en'
 import __builtin__, sys, os
 
 from calibre import config_dir
+from calibre.constants import system_theme
+from PyQt5.Qt import QIcon, QApplication
 
 class PathResolver(object):
 
@@ -72,10 +74,29 @@ def get_path(path, data=False, allow_user_override=True):
             return f.read()
     return fpath
 
-def get_image_path(path, data=False, allow_user_override=True):
+system_theme = 'Numix-Mod'
+def get_system_icons(flname):
+    QIcon.setThemeName(system_theme)
+    icon = QIcon.fromTheme(flname)
+    if icon.hasThemeIcon(flname):
+        #print(flname)
+        return icon.fromTheme(flname)
+    else:
+        raise AttributeError('no system icon found')
+
+def get_image_path(path, data=False, allow_user_override=True, use_system_icons=True):
+    if system_theme and use_system_icons:
+        try:
+            flname = os.path.splitext(os.path.basename(path))[0]
+            return get_system_icons(flname)
+        except:
+            if not path:
+                return get_path('images', allow_user_override=allow_user_override)
+            return get_path('images/'+path, data=data, allow_user_override=allow_user_override)
     if not path:
         return get_path('images', allow_user_override=allow_user_override)
     return get_path('images/'+path, data=data, allow_user_override=allow_user_override)
+
 
 def js_name_to_path(name, ext='.coffee'):
     path = (u'/'.join(name.split('.'))) + ext

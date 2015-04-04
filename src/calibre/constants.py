@@ -4,7 +4,7 @@ __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal kovid@kovidgoyal.net'
 __docformat__ = 'restructuredtext en'
 __appname__   = u'calibre'
-numeric_version = (2, 23, 0)
+numeric_version = (2, 19, 0)
 __version__   = u'.'.join(map(unicode, numeric_version))
 __author__    = u"Kovid Goyal <kovid@kovidgoyal.net>"
 
@@ -13,6 +13,7 @@ Various run time constants.
 '''
 
 import sys, locale, codecs, os, importlib, collections
+from PyQt5.Qt import QApplication, QIcon
 
 _plat = sys.platform.lower()
 iswindows = 'win32' in _plat or 'win64' in _plat
@@ -73,6 +74,17 @@ else:
             # imported changes ascii to utf-8
     except:
         filesystem_encoding = 'utf-8'
+
+'''get_system_theme_name'''
+
+def get_system_theme_name():
+    app = QApplication([])
+    return QIcon.themeName()
+
+if islinux:
+    system_theme = get_system_theme_name()
+else:
+    system_theme = False
 
 
 DEBUG = False
