@@ -990,7 +990,8 @@ class Application(QApplication):
             if not depth_ok:
                 prints('Color depth is less than 32 bits disabling modern look')
 
-        self.using_calibre_style = force_calibre_style or (depth_ok and gprefs['ui_style'] != 'system')
+        self.using_calibre_style = force_calibre_style or 'CALIBRE_IGNORE_SYSTEM_THEME' in os.environ or (
+            depth_ok and gprefs['ui_style'] != 'system')
         if self.using_calibre_style:
             self.load_calibre_style()
 
@@ -1015,7 +1016,7 @@ class Application(QApplication):
             'BrowserReload': u'view-refresh.png',
         }.iteritems():
             if v not in pcache:
-                p = I(v, use_system_icons=False)
+                p = I(v, use_system_icons=False))
                 if isinstance(p, bytes):
                     p = p.decode(filesystem_encoding)
                 # if not os.path.exists(p): raise ValueError(p)
@@ -1180,7 +1181,7 @@ def must_use_qt():
     RuntimeError if using Qt is not possible, which will happen if the current
     thread is not the main GUI thread. On linux, it uses a special QPA headless
     plugin, so that the X server does not need to be running. '''
-    global gui_thread, _store_app
+    global gui_thread
     ensure_app()
     if gui_thread is None:
         gui_thread = QThread.currentThread()
@@ -1288,15 +1289,3 @@ def event_type_name(ev_or_etype):
         if num == etype:
             return name
     return 'UnknownEventType'
-
-if islinux or isbsd:
-    def workaround_broken_under_mouse(ch):
-        import sip
-        from PyQt5.Qt import QCursor, QToolButton
-        # See https://bugreports.qt-project.org/browse/QTBUG-40233
-        if isinstance(ch, QToolButton) and not sip.isdeleted(ch):
-            ch.setAttribute(Qt.WA_UnderMouse, ch.rect().contains(ch.mapFromGlobal(QCursor.pos())))
-            ch.update()
-else:
-    workaround_broken_under_mouse = None
-
